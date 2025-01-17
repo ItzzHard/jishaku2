@@ -44,19 +44,24 @@ class ManagementFeature(Feature):
 
         extensions: typing.Iterable[typing.List[str]] = extensions  # type: ignore
 
-        paginator = commands.Paginator(prefix='', suffix='')
+            paginator = commands.Paginator(prefix='', suffix='')
 
         # 'jsk reload' on its own just reloads jishaku
         if ctx.invoked_with == 'reload' and not extensions:
             extensions = [['jishaku']]
 
+        # Replace Unicode emojis with custom emojis
+        reload_icon = "<a:reload:1329815312807231528>"
+        load_icon = "<a:download:1329816636970238004>"
+        warning_icon = "<:warn:1329816130231210024>"
+
         for extension in itertools.chain(*extensions):
             method, icon = (
-                (self.bot.reload_extension, "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}")
+                (self.bot.reload_extension, reload_icon)
                 if extension in self.bot.extensions else
-                (self.bot.load_extension, "\N{INBOX TRAY}")
+                (self.bot.load_extension, load_icon)
             )
-
+    
             try:
                 await discord.utils.maybe_coroutine(method, extension)
             except Exception as exc:  # pylint: disable=broad-except
@@ -67,7 +72,7 @@ class ManagementFeature(Feature):
                     traceback_data = ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__, 2))
 
                 paginator.add_line(
-                    f"{icon}\N{WARNING SIGN} `{extension}`\n```py\n{traceback_data}\n```",
+                    f"{icon}{warning_icon} `{extension}`\n```py\n{traceback_data}\n```",
                     empty=True
                 )
             else:
@@ -76,35 +81,37 @@ class ManagementFeature(Feature):
         for page in paginator.pages:
             await ctx.send(page)
 
+
     @Feature.Command(parent="jsk", name="unload")
-    async def jsk_unload(self, ctx: ContextA, *extensions: ExtensionConverter):  # type: ignore
+    async def unload(self, ctx: commands.Context, *extensions: typing.Iterable[typing.List[str]]):
         """
         Unloads the given extension names.
 
         Reports any extensions that failed to unload.
         """
 
-        extensions: typing.Iterable[typing.List[str]] = extensions  # type: ignore
-
         paginator = commands.Paginator(prefix='', suffix='')
-        icon = "\N{OUTBOX TRAY}"
+
+        # Replace Unicode emojis with custom emojis
+        unload_icon = "<a:unloading:1329816663276781650>"
+        warning_icon = "<:warn:1329816130231210024>"
 
         for extension in itertools.chain(*extensions):
             try:
                 await discord.utils.maybe_coroutine(self.bot.unload_extension, extension)
-            except Exception as exc:  # pylint: disable=broad-except
+            except Exception as exc:  # Catch and handle exceptions
                 traceback_data = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__, 2))
 
                 paginator.add_line(
-                    f"{icon}\N{WARNING SIGN} `{extension}`\n```py\n{traceback_data}\n```",
+                    f"{unload_icon}{warning_icon} `{extension}`\n```py\n{traceback_data}\n```",
                     empty=True
                 )
             else:
-                paginator.add_line(f"{icon} `{extension}`", empty=True)
+                paginator.add_line(f"{unload_icon} `{extension}`", empty=True)
 
+        # Send the paginator pages
         for page in paginator.pages:
             await ctx.send(page)
-
     @Feature.Command(parent="jsk", name="shutdown", aliases=["logout"])
     async def jsk_shutdown(self, ctx: ContextA):
         """
