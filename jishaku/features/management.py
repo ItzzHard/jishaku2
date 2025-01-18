@@ -44,7 +44,7 @@ class ManagementFeature(Feature):
 
         extensions: typing.Iterable[typing.List[str]] = extensions  # type: ignore
 
-            paginator = commands.Paginator(prefix='', suffix='')
+        paginator = commands.Paginator(prefix='', suffix='')
 
         # 'jsk reload' on its own just reloads jishaku
         if ctx.invoked_with == 'reload' and not extensions:
