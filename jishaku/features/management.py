@@ -101,8 +101,6 @@ class ManagementFeature(Feature):
         for extension in itertools.chain(*extensions):
             try:
                 await discord.utils.maybe_coroutine(self.bot.unload_extension, extension)
-            try:
-                await discord.utils.maybe_coroutine(self.bot.unload_extension, extension)
             except Exception as exc:  # Catch and handle exceptions
                 traceback_data = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__, 2))
 
