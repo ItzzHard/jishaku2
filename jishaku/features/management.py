@@ -96,7 +96,11 @@ class ManagementFeature(Feature):
         unload_icon = "<a:unloading:1329816663276781650>"
         warning_icon = "<:warn:1329816130231210024>"
 
+        extensions: typing.Iterable[typing.List[str]] = extensions  # type: ignore
+
         for extension in itertools.chain(*extensions):
+            try:
+                await discord.utils.maybe_coroutine(self.bot.unload_extension, extension)
             try:
                 await discord.utils.maybe_coroutine(self.bot.unload_extension, extension)
             except Exception as exc:  # Catch and handle exceptions
