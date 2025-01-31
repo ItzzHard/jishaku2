@@ -83,7 +83,7 @@ class ManagementFeature(Feature):
 
 
     @Feature.Command(parent="jsk", name="unload")
-    async def unload(self, ctx: commands.Context, *extensions: typing.Iterable[typing.List[str]]):
+    async def jsk_unload(self, ctx: ContextA, *extensions: ExtensionConverter):
         """
         Unloads the given extension names.
 
