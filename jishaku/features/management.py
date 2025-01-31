@@ -90,13 +90,14 @@ class ManagementFeature(Feature):
         Reports any extensions that failed to unload.
         """
 
+        extensions: typing.Iterable[typing.List[str]] = extensions
+
         paginator = commands.Paginator(prefix='', suffix='')
 
         # Replace Unicode emojis with custom emojis
         unload_icon = "<a:unloading:1329816663276781650>"
         warning_icon = "<:warn:1329816130231210024>"
 
-        extensions: typing.Iterable[typing.List[str]] = extensions  # type: ignore
 
         for extension in itertools.chain(*extensions):
             try:
